@@ -42,8 +42,8 @@ export function AppLayout(): JSX.Element {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar fixa (desktop) */}
-      <aside className="hidden w-66 shrink-0 lg:block" aria-label="Navegação principal">
-        <div className="fixed inset-y-0 left-0 w-66">
+      <aside className="hidden w-64 shrink-0 lg:block" aria-label="Navegação principal">
+        <div className="fixed inset-y-0 left-0 w-64">
           <Sidebar />
         </div>
       </aside>

@@ -53,27 +53,6 @@ drop policy if exists system_logs_admin_select on public.system_logs;
 create policy system_logs_admin_select on public.system_logs
   for select using (public.is_admin());
 
--- ------------------------------------------------------------
--- Funções auxiliares para o painel administrativo (§42)
--- ------------------------------------------------------------
-create or replace function public.acadbot_stats()
-returns jsonb
-language sql
-stable
-security definer
-set search_path = public
-as $$
-  select jsonb_build_object(
-    'users', (select count(*) from public.profiles),
-    'projects', (select count(*) from public.projects),
-    'jobs', (select count(*) from public.research_jobs),
-    'sources', (select count(*) from public.sources),
-    'saved_sources', (select count(*) from public.saved_sources),
-    'validations', (select count(*) from public.validation_jobs),
-    'exports', (select count(*) from public.exports),
-    'errors', (select count(*) from public.system_logs where level = 'error')
-  );
-$$;
-
-revoke all on function public.acadbot_stats() from public;
-grant execute on function public.acadbot_stats() to authenticated;
+-- A função acadbot_stats() foi movida para o FIM do ficheiro 0007:
+-- ela referencia a tabela public.exports, que só é criada no 0007, e as
+-- funções language sql resolvem referências no momento da criação.

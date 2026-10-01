@@ -4,20 +4,6 @@
 
 create extension if not exists "pgcrypto";
 
--- Utilizador atual é administrador? (security definer evita recursão em RLS)
-create or replace function public.is_admin()
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
-as $$
-  select exists (
-    select 1 from public.profiles p
-    where p.id = auth.uid() and p.role = 'admin'
-  );
-$$;
-
 -- updated_at automático
 create or replace function public.set_updated_at()
 returns trigger
@@ -50,6 +36,23 @@ drop trigger if exists profiles_set_updated_at on public.profiles;
 create trigger profiles_set_updated_at
   before update on public.profiles
   for each row execute function public.set_updated_at();
+
+-- Utilizador atual é administrador? (security definer evita recursão em RLS)
+-- Nota: criado DEPOIS da tabela profiles — funções language sql resolvem as
+-- referências a tabelas no momento da criação (caso contrário: ERROR 42P01
+-- relation "public.profiles" does not exist).
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.profiles p
+    where p.id = auth.uid() and p.role = 'admin'
+  );
+$$;
 
 -- Criação automática do perfil após registo (§8)
 create or replace function public.handle_new_user()

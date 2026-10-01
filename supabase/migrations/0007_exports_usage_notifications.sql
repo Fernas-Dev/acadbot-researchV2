@@ -80,3 +80,31 @@ alter table public.app_settings enable row level security;
 drop policy if exists app_settings_admin on public.app_settings;
 create policy app_settings_admin on public.app_settings
   for all using (public.is_admin()) with check (public.is_admin());
+
+-- ------------------------------------------------------------
+-- Funções auxiliares para o painel administrativo (§42)
+-- Definida aqui (e não no 0006) porque referencia public.exports,
+-- criada neste ficheiro — funções language sql resolvem referências
+-- no momento da criação.
+-- ------------------------------------------------------------
+create or replace function public.acadbot_stats()
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select jsonb_build_object(
+    'users', (select count(*) from public.profiles),
+    'projects', (select count(*) from public.projects),
+    'jobs', (select count(*) from public.research_jobs),
+    'sources', (select count(*) from public.sources),
+    'saved_sources', (select count(*) from public.saved_sources),
+    'validations', (select count(*) from public.validation_jobs),
+    'exports', (select count(*) from public.exports),
+    'errors', (select count(*) from public.system_logs where level = 'error')
+  );
+$$;
+
+revoke all on function public.acadbot_stats() from public;
+grant execute on function public.acadbot_stats() to authenticated;

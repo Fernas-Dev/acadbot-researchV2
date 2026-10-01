@@ -9,6 +9,11 @@ import { z } from "zod";
  */
 function loadEnvFile(): void {
   const candidates = [
+    // npm define INIT_CWD como o diretório onde o utilizador invocou o npm (raiz do monorepo)
+    ...(process.env.INIT_CWD ? [path.resolve(process.env.INIT_CWD, ".env")] : []),
+    // Scripts de workspace correm com cwd = backend/ → .env na raiz do monorepo (1 nível acima)
+    path.resolve(process.cwd(), "../.env"),
+    // Fallbacks legados
     path.resolve(process.cwd(), "../../.env"),
     path.resolve(process.cwd(), ".env"),
   ];
