@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Builds
+dist/
+build/
+*.tsbuildinfo
+
+# Environment — nunca commitar segredos
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+*.err
+npm-debug.log*
+
+# Test coverage
+coverage/
+
+# Vite / caches
+.vite/
+.turbo/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Supabase local temp
+supabase/.temp/
