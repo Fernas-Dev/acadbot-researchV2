@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, FileCheck2, HelpCircle, Search, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, FileCheck2, HelpCircle, Moon, Search, ShieldCheck, Sparkles, Sun } from "lucide-react";
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from "@/components/ui/primitives.js";
 import { BookMarked, Quote, Table2 } from "lucide-react";
 
@@ -37,17 +38,42 @@ const FEATURES = [
 ];
 
 export default function LandingPage(): JSX.Element {
+  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
+
+  const toggleTheme = (): void => {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    try {
+      localStorage.setItem("acadbot-theme", next ? "dark" : "light");
+    } catch {
+      /* armazenamento indisponível — tema mantém-se na sessão */
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <div className="mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 sm:px-6">
           <div className="flex items-center gap-2">
             <span className="flex size-8 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
               AR
             </span>
             <span className="text-sm font-semibold">AcadBot Research</span>
           </div>
-          <nav className="flex items-center gap-2">
+          <nav aria-label="Navegação da página" className="flex flex-wrap items-center justify-end gap-1">
+            <Button variant="ghost" size="sm" asChild>
+              <a href="#funcionalidades">Funcionalidades</a>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <a href="#precos">Preços</a>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <a href="#faq">FAQ</a>
+            </Button>
+            <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Alternar tema">
+              {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            </Button>
             <Button variant="ghost" asChild className="hidden sm:inline-flex">
               <Link to="/login">Entrar</Link>
             </Button>
@@ -101,7 +127,7 @@ export default function LandingPage(): JSX.Element {
       </section>
 
       {/* Funcionalidades */}
-      <section className="border-t bg-secondary/30 py-16">
+      <section id="funcionalidades" className="scroll-mt-20 border-t bg-secondary/30 py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <h2 className="text-2xl font-semibold">Funcionalidades</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -123,7 +149,7 @@ export default function LandingPage(): JSX.Element {
       </section>
 
       {/* Como funciona */}
-      <section className="py-16">
+      <section id="precos" className="scroll-mt-20 py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <h2 className="text-2xl font-semibold">Como funciona</h2>
           <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -146,7 +172,7 @@ export default function LandingPage(): JSX.Element {
       </section>
 
       {/* Blocos específicos */}
-      <section className="border-t bg-secondary/30 py-16">
+      <section id="faq" className="scroll-mt-20 border-t bg-secondary/30 py-16">
         <div className="mx-auto grid max-w-6xl gap-6 px-4 sm:px-6 lg:grid-cols-3">
           {[
             {
