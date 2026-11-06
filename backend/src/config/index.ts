@@ -93,7 +93,7 @@ export const integrations = {
   ai: Boolean(env.AI_API_KEY),
   crossref: true,
   crossrefPolite: Boolean(env.CROSSREF_MAILTO),
-  semanticScholar: true, // funciona sem key (limites reduzidos)
+  semanticScholar: Boolean(env.SEMANTIC_SCHOLAR_API_KEY),
   semanticScholarKeyed: Boolean(env.SEMANTIC_SCHOLAR_API_KEY),
   openalex: true,
   openalexPolite: Boolean(env.OPENALEX_MAILTO || env.OPENALEX_API_KEY),

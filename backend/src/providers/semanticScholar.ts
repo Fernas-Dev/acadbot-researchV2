@@ -107,7 +107,7 @@ class Throttler {
 export class SemanticScholarProvider implements AcademicSearchProvider {
   readonly id = "semantic_scholar" as const;
   readonly label = "Semantic Scholar";
-  private throttler = new Throttler(env.SEMANTIC_SCHOLAR_API_KEY ? 200 : 1100);
+  private throttler = new Throttler(env.SEMANTIC_SCHOLAR_API_KEY ? 500 : 2000);
 
   private headers(): Record<string, string> {
     return env.SEMANTIC_SCHOLAR_API_KEY
@@ -126,6 +126,12 @@ export class SemanticScholarProvider implements AcademicSearchProvider {
   }
 
   async search(input: ProviderSearchInput): Promise<ProviderSearchResult[]> {
+    if (!env.SEMANTIC_SCHOLAR_API_KEY) {
+      throw new Error(
+        "Semantic Scholar desativado: configure SEMANTIC_SCHOLAR_API_KEY para usar a API com limites aceitáveis.",
+      );
+    }
+
     const params = new URLSearchParams();
     params.set("query", input.query);
     params.set("limit", String(Math.min(Math.max(input.maxResults, 1), 100)));

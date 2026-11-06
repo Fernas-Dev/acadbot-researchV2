@@ -33,7 +33,7 @@ class ProviderRegistry {
   constructor() {
     this.register(crossrefProvider, 1, true);
     this.register(openalexProvider, 2, true);
-    this.register(semanticScholarProvider, 3, true);
+    this.register(semanticScholarProvider, 3, Boolean(process.env.SEMANTIC_SCHOLAR_API_KEY));
   }
 
   register(instance: AcademicSearchProvider, priority: number, enabled: boolean): void {
@@ -50,7 +50,12 @@ class ProviderRegistry {
 
   /** Providers ativos, ordenados por prioridade. */
   enabled(): ProviderState[] {
-    return this.list().filter((s) => s.enabled);
+    return this.list().filter((s) => {
+      if (s.instance.id === "semantic_scholar" && !process.env.SEMANTIC_SCHOLAR_API_KEY) {
+        return false;
+      }
+      return s.enabled;
+    });
   }
 
   setEnabled(id: ProviderId, enabled: boolean): void {
@@ -92,10 +97,16 @@ class ProviderRegistry {
       for (const row of rows) {
         const state = this.states.get(row.id as ProviderId);
         if (!state) continue;
-        state.enabled = row.enabled ?? state.enabled;
         state.priority = row.priority ?? state.priority;
         state.lastError = row.last_error;
         state.lastCheckedAt = row.last_checked_at;
+
+        if (state.instance.id === "semantic_scholar" && !process.env.SEMANTIC_SCHOLAR_API_KEY) {
+          state.enabled = false;
+          continue;
+        }
+
+        state.enabled = row.enabled ?? state.enabled;
       }
       this.loadedFromDb = true;
     } catch (error) {

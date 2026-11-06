@@ -118,10 +118,11 @@ export async function runResearch(
       steps = setStep(steps, providerKey, "active");
       report(steps, percentFor(steps));
       const batch: ProviderSearchResult[] = [];
+      const maxQueriesPerProvider = state.instance.id === "semantic_scholar" ? 2 : 4;
       let ok = true;
       let errorMessage: string | undefined;
       try {
-        for (const q of queries.slice(0, 4)) {
+        for (const q of queries.slice(0, maxQueriesPerProvider)) {
           const results = await state.instance.search({
             query: q.query,
             maxResults: resultsPerQuery,
